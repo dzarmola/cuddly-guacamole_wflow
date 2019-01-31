@@ -25,7 +25,7 @@ cwd=os.getcwd()
 p2ch = "{}/scripts/cdhit/cdhit/".format(cwd)
 p2hh = "${}/scripts/hhsuite/hhsuite/bin/".format(cwd)
 
-def main(runname,data_folders,clustering=False,MPARAM="50",EV=1e-3,INF=1.8):
+def main(runname,data_folders,clustering=False,MPARAM="50",EV=1e-3,INF=1.8,NUM_REPR=3):
     """Each data_folder must contain org_fastas directory, optionally org_profiles directory,
     json with ranges to convert, structures with hhms to use for that"""
 
@@ -157,7 +157,6 @@ def main(runname,data_folders,clustering=False,MPARAM="50",EV=1e-3,INF=1.8):
 
     save_file = "{}/save_{}.txt".format(dirname,EV)
     plot_file = "{}/plot_{}.png".format(dirname,EV)
-    print _hhrs
     scripts.my_little_merger_error_cor.main(_hhrs,cluster_file,save_file,plot_file)
 
     representatives_dir = "{}/representatives".format(dirname)
@@ -171,7 +170,7 @@ def main(runname,data_folders,clustering=False,MPARAM="50",EV=1e-3,INF=1.8):
                 subprocess.check_call(["cd-hit", "-i", cdfasta, "-d", '0', "-sc", '1',"-c",'0.7',
                                        "-o", cdout], stdout=devnull, stderr=subprocess.STDOUT)
             scripts.get_representatives_from_clusters.main("{}.clstr".format(cdout), normfasta,
-                                                           "{}/{}_representatives.fa".format(representatives_dir,fam))
+                                                           "{}/{}_representatives.fa".format(representatives_dir,fam),num_repr=NUM_REPR)
     scripts.my_little_replacer.main(save_file,representatives_dir,"{}/representative_alignment.fasta".format(dirname))
 
 if __name__ == "__main__":
@@ -184,9 +183,10 @@ if __name__ == "__main__":
     in the ranges.json will be used in further analysis.""")
     parser.add_argument('--run_name',"-n", type=str, default="", help='Name to be given to this run. Directory will be created in the current working dir.')
     parser.add_argument('--evalue',"-e", type=float, default=1e-3, help='E-value cutoff for significant hhsearch hits')
+    parser.add_argument('--num_representatives',"-r", type=float, default=3, help='Number of representative sequences for each family')
     parser.add_argument('--mparam', "-m", type=str, default="50", help='Cutoff parameter for columns in hhmake')
-    parser.add_argument('--inflation', "-i", type=float, default=1.8, help='Inflation vale for mcl clustering')
-    parser.add_argument('--cluster', "-c", action='store_true', help='Inflation vale for mcl clustering')
+    parser.add_argument('--inflation', "-i", type=float, default=1.8, help='Inflation value for mcl clustering')
+    #parser.add_argument('--cluster', "-c", action='store_true', help='Should we add clusters to the plot? Currently ')
 
     args = parser.parse_args()
 
@@ -194,8 +194,9 @@ if __name__ == "__main__":
     mparam = args.mparam
     ev = args.evalue
     inf = args.inflation
-    clustering = args.cluster
+    #clustering = args.cluster
     clustering = False
+    num_repr = args.num_representatives
 
     runname = args.run_name
     if not runname:
@@ -205,6 +206,6 @@ if __name__ == "__main__":
 
     data_folders = args.directories
 
-    main(runname, data_folders, clustering=clustering, MPARAM=mparam, EV=ev, INF=inf)
+    main(runname, data_folders, clustering=clustering, MPARAM=mparam, EV=ev, INF=inf, NUM_REPR=num_repr)
 
 

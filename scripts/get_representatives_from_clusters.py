@@ -2,16 +2,14 @@
 import sys
 import re
 
-NUM_REPR = 3
-
-def parse_clusters(clfile):
+def parse_clusters(clfile,num_repr=3):
     with open(clfile) as input:
-        clstrs = re.split(">Cluster",input.read())[1:NUM_REPR+1]
+        clstrs = re.split(">Cluster",input.read())[1:num_repr+1]
 #        clstrs = map(lambda x:x.split("\n")[1:],re.split(">Cluster",input.read())[1:NUM_REPR+1])
 #        print clstrs[0][0]
     reprs = []
     for clstr in clstrs:
-        seqs = re.findall("\t([0-9]+)aa, >([A-Z0-9a-z_]+)\.\.\.",clstr)
+        seqs = re.findall("\t([0-9]+)aa, >([A-Z0-9a-z_/-]+)\.\.\.",clstr)
         reprs.append(sorted(seqs, reverse =True, key=lambda x: int(x[0]))[0][1])
     return reprs
 
@@ -25,8 +23,8 @@ def get_seqs(fafile, reprs):
             out.append(seq)
     return out
 
-def main(clfile,fafile,outfile=""):
-    out = get_seqs(fafile, parse_clusters(clfile))
+def main(clfile,fafile,outfile="",num_repr=3):
+    out = get_seqs(fafile, parse_clusters(clfile,num_repr))
     if outfile:
         with open(outfile,"w",0) as output:
             output.write(">"+("\n>".join(out)))
