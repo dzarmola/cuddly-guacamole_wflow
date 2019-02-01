@@ -40,3 +40,43 @@ optional arguments:
   --inflation INFLATION, -i INFLATION
                         Inflation value for mcl clustering
   ```
+
+### Example analysis would go as follows:
+Directory structure:
+```
+some_folder:
+  scripts/
+  full_workflow.py
+  
+  families_with_structure/
+      org_fastas/
+          PF1.fasta
+          PF2.fasta
+          PF3.fasta
+      struct_hhms/
+          4fak.hhm
+          1ble.hhm
+      ranges.json
+  families_without_structure/
+      org_fastas/
+          PF5.fasta
+          PF6.fa
+```
+ranges.json:
+```
+{
+  '4fak': [ (1,100), (150,230) ],
+  '1ble': [ (3,126), (200,315) ],
+}
+```
+run with:
+```
+./full_workflow.py name_of_my_workflow families_with_structure/ families_without_structure/
+```
+Will result in creation of a directory name_of_my_workflow,
+where `plot_$evalue.png` will display the final profile alignment image,
+and `representative_alignment.fasta` will contain the alignment with specified number of representative
+sequences from each family.
+
+IMPORTANT! Sequences will in the representative alignment will only contain residues which appeared
+in the profile (thus may lack insertions).
