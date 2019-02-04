@@ -104,7 +104,7 @@ def main(runname,data_folders,clustering=False,MPARAM="50",EV=1e-3,INF=1.8,NUM_R
                                 e = s + len(line.strip("-")) # TODO check
                             else:
                                 if line[0]==">":
-                                    outFasta.write(">{}_{}\n".format(fam, re.sub("[_0-9\-]*$","",line[1:].strip())))
+                                    outFasta.write(">{}{}\n".format(fam+"_" if fam not in line else "",  re.sub("\\[_0-9-]*$","",line[1:].strip()))) #line[1:].strip() ))
                                 else:
                                     outFasta.write("{}\n".format(line[s:e+1]))
                 os.remove(path)
