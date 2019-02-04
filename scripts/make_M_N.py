@@ -55,12 +55,12 @@ def remake_seqs(ncols):
 def write_out(names,strings,outname):
     with open(outname,"w",0) as out:
         for n,s in zip(names,strings):
-            if n[-2]=="_": n = n[:-2]
+            #if n[-2]=="_": n = n[:-2]
             out.write("{}\n{}\n".format(n,s))
     coutname = outname.replace(".fa","_cdhit.fa")
     with open(coutname,"w",0) as out:
         for n,s in zip(names,strings):
-            if n[-2]=="_": n = n[:-2]
+            #if n[-2]=="_1": n = n[:-2]
             out.write("{}\n{}\n".format(n,s.replace("-","")))
 
 def main(fname, cutoff,family=''):
