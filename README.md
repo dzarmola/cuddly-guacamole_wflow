@@ -2,11 +2,13 @@
 Workflow for aligning protein family profiles.
 
 Uses hhsuite for profile creation and pairwise alignments, cd-hit for representative selection,
-mcl for clustering [optional], and clustalo for adding single sequences to the family alignments
+mcl for clustering [optional, currently undergoing repairs], and clustalo for adding single sequences to the family alignments
 [subject to change].
 
 ```
-usage: full_workflow.py [-h] [--run_name RUN_NAME] [--evalue EVALUE]
+usage: full_workflow.py [-h] [--run_name RUN_NAME]
+                        [--force_representatives FORCE_REPRESENTATIVES]
+                        [--evalue EVALUE]
                         [--num_representatives NUM_REPRESENTATIVES]
                         [--mparam MPARAM] [--inflation INFLATION]
                         directories [directories ...]
@@ -31,6 +33,9 @@ optional arguments:
   --run_name RUN_NAME, -n RUN_NAME
                         Name to be given to this run. Directory will be
                         created in the current working dir.
+  --force_representatives FORCE_REPRESENTATIVES, -f FORCE_REPRESENTATIVES
+                        Sequences with names matching the strings separated by
+                        a "|" will be taken as additional representatives.
   --evalue EVALUE, -e EVALUE
                         E-value cutoff for significant hhsearch hits
   --num_representatives NUM_REPRESENTATIVES, -r NUM_REPRESENTATIVES
