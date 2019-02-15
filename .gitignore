@@ -1,0 +1,8 @@
+testow*
+**/*.pyc
+sources
+venv
+scripts_old
+*.json
+*.sh
+*.png
