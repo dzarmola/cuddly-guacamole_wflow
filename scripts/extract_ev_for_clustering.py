@@ -1,31 +1,33 @@
 """(C) Aleksandra Jarmolinska 2018-2019 a.jarmolinska@mimuw.edu.pl"""
-import glob
-from my_little_hhpred_reader import HHpredOutput
 import argparse
+import glob
+
+from my_little_hhpred_reader import HHpredOutput
 
 
 ###USAGE
 ## takes hhsearch all vs all results directory
 ## creates file "all_vs_all.out"
 
-def parse_results(HHRS,outname="all_vs_all.out",ev_cutoff=.001):
+def parse_results(HHRS, outname="all_vs_all.out", ev_cutoff=.001):
     RESULTS = []
-    #parser = HHOutputParser(False)
+    # parser = HHOutputParser(False)
     for hhr in HHRS:
-        results = HHpredOutput(hhr)#parser.parse_file(hhr)
-        this = results.query #_query_name
+        results = HHpredOutput(hhr)  # parser.parse_file(hhr)
+        this = results.query  # _query_name
         for hit in results.hits:
-            id = hit.target#_id
+            id = hit.target  # _id
             if id == this:
                 continue
-            #eva =  hit._evalue
+            # eva =  hit._evalue
             if hit.eval < ev_cutoff:
-                RESULTS.append((this,id,hit.eval))
+                RESULTS.append((this, id, hit.eval))
     print RESULTS
     with open(outname, "w") as out:
         out.write("\n".join(map(lambda x: "{}\t{}\t{}".format(*x), RESULTS)))
 
     return RESULTS
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -40,8 +42,6 @@ if __name__ == "__main__":
 
     HHRS = glob.glob(args.working_directory + "/*.hhr")
 
-    parse_results(HHRS,args.output,args.EV_CUTOFF)
-
+    parse_results(HHRS, args.output, args.EV_CUTOFF)
 
 #    print HHRS
-
