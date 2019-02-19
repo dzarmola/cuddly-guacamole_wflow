@@ -17,7 +17,7 @@ def from_save(filename):
 def read_fasta(fname):
     seqs = []
     with open(fname) as input:
-        seqs = re.findall(">([A-Za-z0-9|_]+)\n([A-Z\n-]+)", input.read())
+        seqs = re.findall(">([A-Za-z0-9/|_-]+)\n([\.a-zA-Z\n-]+)", input.read())
     return fname.split("/")[-1].replace("_representatives.fa", ""), [(x[0], x[1].replace("\n", "")) for x in seqs]
 
 
@@ -43,7 +43,8 @@ def main(sfile, rpdir, outfile=''):
         name, seqs = read_fasta(file)
         representatives[name] = seqs
 
-    #    print len(representatives.keys()),representatives.keys()
+    #print len(representatives.keys()),representatives.keys()
+    #print representatives["PF03788"]
 
     if outfile:
         with open(outfile, "w", 0) as output:
@@ -53,6 +54,7 @@ def main(sfile, rpdir, outfile=''):
     else:
         for l, d in zip(labels, data):
             #            print l , get(representatives, l)
+            #print l,len(get(representatives, l))
             for n, s in get(representatives, l):
                 print ">{}\n{}".format(n, replace(s, d))
 
