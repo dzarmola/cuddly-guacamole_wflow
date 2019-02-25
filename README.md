@@ -1,9 +1,9 @@
 # cuddly-guacamole_wflow
 Workflow for aligning protein family profiles.
 
-Uses hhsuite for profile creation and pairwise alignments, cd-hit for representative selection,
-mcl for clustering [optional, currently undergoing repairs], and clustalo for adding single sequences to the family alignments
-[subject to change].
+Uses hhsuite for profile creation and pairwise alignments, cd-hit (ver >4.7) for representative selection,
+mcl for clustering (optional, currently undergoing repairs), and clustalo for adding single sequences to the family alignments
+(subject to change).
 
 ```
 usage: full_workflow.py [-h] [--run_name RUN_NAME]
