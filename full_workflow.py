@@ -216,7 +216,7 @@ if __name__ == "__main__":
     parser.add_argument('--force_representatives', "-f", type=str, default="",
                         help='Sequences with names matching the strings separated by a "|" will be taken as additional representatives.')
     parser.add_argument('--evalue', "-e", type=float, default=1e-3, help='E-value cutoff for significant hhsearch hits')
-    parser.add_argument('--num_representatives', "-r", type=float, default=3,
+    parser.add_argument('--num_representatives', "-r", type=int, default=3,
                         help='Number of representative sequences for each family')
     parser.add_argument('--mparam', "-m", type=str, default="50", help='Cutoff parameter for columns in hhmake')
     parser.add_argument('--inflation', "-i", type=float, default=1.8, help='Inflation value for mcl clustering')
