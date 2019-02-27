@@ -184,7 +184,7 @@ def main(runname, data_folders, clustering=False, MPARAM="50", EV=1e-3, INF=1.8,
 
     save_file = "{}/save_{}.txt".format(dirname, EV)
     plot_file = "{}/plot_{}.png".format(dirname, EV)
-    scripts.my_little_merger_error_cor.main(_hhrs, cluster_file, save_file, plot_file,
+    scripts.my_little_merger_error_cor.main(_hhrs, cluster_file, save_file, plot_file, eval_cutoff=EV,
                                             name_compare_func=name_comparison)
 
     representatives_dir = "{}/representatives".format(dirname)
@@ -242,6 +242,5 @@ if __name__ == "__main__":
         runname = os.path.abspath(runname)
 
     data_folders = args.directories
-
     main(runname, data_folders, clustering=clustering, MPARAM=mparam, EV=ev, INF=inf, NUM_REPR=num_repr,
          obligatory=obligatory_reps)
