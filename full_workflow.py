@@ -7,7 +7,7 @@ mcl for clustering [optional], and clustalo for adding single sequences to the f
 
 (C) Aleksandra Jarmolinska 2018-2019 a.jarmolinska@mimuw.edu.pl
 """
-VERSION = "0.1.9"
+VERSION = "0.2.0"
 
 import argparse
 import glob
@@ -35,16 +35,14 @@ def compare_versions():
     page = urllib2.urlopen(path)
     for line in page:
         ver = re.findall("VERSION = \"([0-9\.]*)\"",line)
-        print ver
-        if ver != VERSION:
-            print "New version is available on GitHub : {}".format(ver)
+        if ver and ver[0] != VERSION:
+            print "New version is available on GitHub : {}".format(ver[0])
             print "I suggest updating"
             odp = raw_input("Are you sure you want to proceed? [Y]/n").strip().lower()
             if not odp or odp[0]=="y":
                 pass
             else:
                 exit("Exiting...")
-    exit()
 
 def name_comparison_func(x):
     x = x[1]  # x = (data,label)
@@ -259,6 +257,7 @@ if __name__ == "__main__":
         runname = "{}/run_{}".format(cwd, stamp)
     else:
         runname = os.path.abspath(runname)
+
 
     data_folders = args.directories
     main(runname, data_folders, clustering=clustering, MPARAM=mparam, EV=ev, INF=inf, NUM_REPR=num_repr,
