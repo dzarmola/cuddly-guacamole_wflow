@@ -7,6 +7,7 @@ mcl for clustering [optional], and clustalo for adding single sequences to the f
 
 (C) Aleksandra Jarmolinska 2018-2019 a.jarmolinska@mimuw.edu.pl
 """
+VERSION = "0.1.9"
 
 import argparse
 import glob
@@ -28,6 +29,22 @@ cwd = os.getcwd()
 p2ch = "{}/scripts/cdhit/cdhit/".format(cwd)
 p2hh = "${}/scripts/hhsuite/hhsuite/bin/".format(cwd)
 
+def compare_versions():
+    import urllib2
+    path = "https://raw.githubusercontent.com/dzarmola/cuddly-guacamole_wflow/master/full_workflow.py"
+    page = urllib2.urlopen(path)
+    for line in page:
+        ver = re.findall("VERSION = \"([0-9\.]*)\"",line)
+        print ver
+        if ver != VERSION:
+            print "New version is available on GitHub : {}".format(ver)
+            print "I suggest updating"
+            odp = raw_input("Are you sure you want to proceed? [Y]/n").strip().lower()
+            if not odp or odp[0]=="y":
+                pass
+            else:
+                exit("Exiting...")
+    exit()
 
 def name_comparison_func(x):
     x = x[1]  # x = (data,label)
@@ -223,6 +240,8 @@ if __name__ == "__main__":
     # parser.add_argument('--cluster', "-c", action='store_true', help='Should we add clusters to the plot? Currently ')
 
     args = parser.parse_args()
+
+    compare_versions()
 
     mparam = args.mparam
     ev = args.evalue
