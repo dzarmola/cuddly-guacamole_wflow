@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+"""(C) Aleksandra Jarmolinska 2018-2019 a.jarmolinska@mimuw.edu.pl"""
 
 import glob
 import re

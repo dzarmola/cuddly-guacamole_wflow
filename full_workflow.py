@@ -7,7 +7,7 @@ mcl for clustering [optional], and clustalo for adding single sequences to the f
 
 (C) Aleksandra Jarmolinska 2018-2019 a.jarmolinska@mimuw.edu.pl
 """
-VERSION = "0.2.0"
+VERSION = "0.2.1"
 
 import argparse
 import glob
@@ -18,16 +18,19 @@ import subprocess
 import tempfile
 import time
 
-import scripts.extract_ev_for_clustering
+"""import scripts.extract_ev_for_clustering
 import scripts.extract_subfastas
 import scripts.get_representatives_from_clusters
 import scripts.make_M_N
 import scripts.my_little_merger_error_cor
-import scripts.my_little_replacer
+import scripts.my_little_replacer"""
+from scripts.import_wrapper import *
+
 
 cwd = os.getcwd()
 p2ch = "{}/scripts/cdhit/cdhit/".format(cwd)
 p2hh = "${}/scripts/hhsuite/hhsuite/bin/".format(cwd)
+
 
 def compare_versions():
     import urllib2
@@ -59,6 +62,7 @@ def name_comparison_func(x):
 name_comparison = name_comparison_func  # None is default
 
 
+@tracer
 def main(runname, data_folders, clustering=False, MPARAM="50", EV=1e-3, INF=1.8, NUM_REPR=3, obligatory=("")):
     """Each data_folder must contain org_fastas directory, optionally org_profiles directory,
     json with ranges to convert, structures with hhms to use for that"""
@@ -116,7 +120,7 @@ def main(runname, data_folders, clustering=False, MPARAM="50", EV=1e-3, INF=1.8,
                     subprocess.check_call(["hhsearch", "-i", "{}/{}.hhm".format(profiles_dir, fam), "-d", all_structs,
                                            "-o", "{}/{}.hhr".format(final_profiles_dir, fam)],
                                           stdout=devnull, stderr=subprocess.STDOUT)
-                s, e = scripts.extract_subfastas.main("{}/{}.hhr".format(final_profiles_dir, fam), json_path)
+                s, e = extract_subfastas("{}/{}.hhr".format(final_profiles_dir, fam), json_path)
 
                 ###instead of extract_fastas.sh
                 fd, path = tempfile.mkstemp()
@@ -124,7 +128,7 @@ def main(runname, data_folders, clustering=False, MPARAM="50", EV=1e-3, INF=1.8,
                 fasta = glob.glob("{}/{}*.fa*".format(fastas_dir, fam))[0]
                 with os.fdopen(fd, 'w') as f:
                     f.write(">moja\n{}\n".format(
-                        scripts.extract_subfastas.extract_seq_from_hhm("{}/{}.hhm".format(profiles_dir, fam), s, e)))
+                        extract_seq_from_hhm("{}/{}.hhm".format(profiles_dir, fam), s, e)))
                 with open(os.devnull, "wb") as devnull:
                     subprocess.check_call(
                         ["clustalo", "--profile2", fasta, "--profile1", path, "-o", path2, "--force", "--wrap=10000"],
@@ -146,7 +150,7 @@ def main(runname, data_folders, clustering=False, MPARAM="50", EV=1e-3, INF=1.8,
                                     outFasta.write("{}\n".format(line[s:e + 1]))
                 os.remove(path)
                 os.remove(path2)
-                scripts.make_M_N.main(new_fasta, int(MPARAM))
+                make_M_N(new_fasta, int(MPARAM))
                 new_fasta_short = "{}/{}_{}.fasta".format(final_profiles_dir, fam, MPARAM)
                 new_hhm_short = "{}/{}_{}.hhm".format(final_profiles_dir, fam, MPARAM)
                 with open(os.devnull, "wb") as devnull:
@@ -161,7 +165,7 @@ def main(runname, data_folders, clustering=False, MPARAM="50", EV=1e-3, INF=1.8,
                 fasta = glob.glob("{}/{}*.fa*".format(fastas_dir, fam))[0]
                 new_fasta = "{}/{}.fasta".format(final_profiles_dir, fam)
                 shutil.copyfile(fasta, new_fasta)
-                scripts.make_M_N.main(new_fasta, int(MPARAM), family=fam)
+                make_M_N(new_fasta, int(MPARAM), family=fam)
                 new_fasta_short = "{}/{}_{}.fasta".format(final_profiles_dir, fam, MPARAM)
                 new_hhm_short = "{}/{}_{}.hhm".format(final_profiles_dir, fam, MPARAM)
                 with open(os.devnull, "wb") as devnull:
@@ -193,13 +197,13 @@ def main(runname, data_folders, clustering=False, MPARAM="50", EV=1e-3, INF=1.8,
     cluster_file = ''
 
     if clustering:  # currently just a stub - TODO: rewrite a bit mcl_in.sh
-        scripts.extract_ev_for_clustering.parse_results(_hhrs, "{}/all_vs_all.out".format(cluster_dir), EV)
+        extract_ev_for_clustering(_hhrs, "{}/all_vs_all.out".format(cluster_dir), EV)
         # bash "$cwd"/scripts/mcl_in.sh all_vs_all_"$EV".out "$INF" clustering_"$part"_"$EV"_"$INF" > /dev/null  ##TODO
         cluster_file = ''
 
     save_file = "{}/save_{}.txt".format(dirname, EV)
     plot_file = "{}/plot_{}.png".format(dirname, EV)
-    scripts.my_little_merger_error_cor.main(_hhrs, cluster_file, save_file, plot_file, eval_cutoff=EV,
+    my_little_merger_error_cor(_hhrs, cluster_file, save_file, plot_file, eval_cutoff=EV,
                                             name_compare_func=name_comparison)
 
     representatives_dir = "{}/representatives".format(dirname)
@@ -212,11 +216,10 @@ def main(runname, data_folders, clustering=False, MPARAM="50", EV=1e-3, INF=1.8,
             with open(os.devnull, "wb") as devnull:
                 subprocess.check_call(["cd-hit", "-i", cdfasta, "-d", '0', "-sc", '1', "-c", '0.7',
                                        "-o", cdout], stdout=devnull, stderr=subprocess.STDOUT)
-            scripts.get_representatives_from_clusters.main("{}.clstr".format(cdout), normfasta,
+            get_representatives_from_clusters("{}.clstr".format(cdout), normfasta,
                                                            "{}/{}_representatives.fa".format(representatives_dir, fam),
                                                            num_repr=NUM_REPR, obligatory=obligatory)
-    scripts.my_little_replacer.main(save_file, representatives_dir, "{}/representative_alignment.fasta".format(dirname))
-
+    my_little_replacer(save_file, representatives_dir, "{}/representative_alignment.fasta".format(dirname))
 
 if __name__ == "__main__":
 
@@ -235,11 +238,16 @@ if __name__ == "__main__":
                         help='Number of representative sequences for each family')
     parser.add_argument('--mparam', "-m", type=str, default="50", help='Cutoff parameter for columns in hhmake')
     parser.add_argument('--inflation', "-i", type=float, default=1.8, help='Inflation value for mcl clustering')
+    parser.add_argument('--log_file', "-l", type=str, default="", help='Specify the name for the log file')
     # parser.add_argument('--cluster', "-c", action='store_true', help='Should we add clusters to the plot? Currently ')
 
     args = parser.parse_args()
 
     compare_versions()
+
+    if args.log_file:
+        logger = Logger(os.path.abspath(args.logfile))
+
 
     mparam = args.mparam
     ev = args.evalue
@@ -257,7 +265,6 @@ if __name__ == "__main__":
         runname = "{}/run_{}".format(cwd, stamp)
     else:
         runname = os.path.abspath(runname)
-
 
     data_folders = args.directories
     main(runname, data_folders, clustering=clustering, MPARAM=mparam, EV=ev, INF=inf, NUM_REPR=num_repr,
