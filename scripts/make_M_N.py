@@ -66,7 +66,7 @@ def write_out(names, strings, outname):
     with open(coutname, "w", 0) as out:
         for n, s in zip(names, strings):
             # if n[-2]=="_1": n = n[:-2]
-            out.write("{}\n{}\n".format(n, s.replace("-", "")))
+            out.write("{}\n{}\n".format(n, s.replace("-", "").replace(".","")))
 
 
 def main(fname, cutoff, family=''):

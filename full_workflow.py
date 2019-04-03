@@ -7,7 +7,7 @@ mcl for clustering [optional], and clustalo for adding single sequences to the f
 
 (C) Aleksandra Jarmolinska 2018-2019 a.jarmolinska@mimuw.edu.pl
 """
-VERSION = "0.2.1"
+VERSION = "0.2.3"
 
 import argparse
 import glob
